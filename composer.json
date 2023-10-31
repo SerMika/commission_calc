@@ -15,6 +15,7 @@
         "symfony/yaml": "6.3.*"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.37",
         "symfony/maker-bundle": "^1.51"
     },
     "config": {
@@ -54,7 +55,11 @@
         ],
         "post-update-cmd": [
             "@auto-scripts"
-        ]
+        ],
+        "phpunit": "phpunit",
+        "fix-cs": "php-cs-fixer fix",
+        "test-cs": "php-cs-fixer fix --dry-run -v",
+        "test": ["@phpunit", "@test-cs"]
     },
     "conflict": {
         "symfony/symfony": "*"
