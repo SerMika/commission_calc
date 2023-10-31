@@ -16,7 +16,9 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.37",
-        "symfony/maker-bundle": "^1.51"
+        "phpunit/phpunit": "^10.4",
+        "symfony/maker-bundle": "^1.51",
+        "symfony/phpunit-bridge": "^6.3"
     },
     "config": {
         "allow-plugins": {
@@ -56,7 +58,7 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "phpunit": "phpunit",
+        "phpunit": "php bin/phpunit",
         "fix-cs": "php-cs-fixer fix",
         "test-cs": "php-cs-fixer fix --dry-run -v",
         "test": ["@phpunit", "@test-cs"]
