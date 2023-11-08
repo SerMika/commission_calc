@@ -8,7 +8,7 @@ use App\Enum\OperationCurrency;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class CurrencyConverterService
+class CurrencyConverterProcessor
 {
     private const EXCHANGE_RATES_API = 'https://developers.paysera.com/tasks/api/currency-exchange-rates';
 

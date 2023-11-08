@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\CommissionCalculation\CommissionCalculationService;
+use App\Service\CommissionCalculation\CommissionCalculationProcessor;
 use App\Service\Reader\OperationReader;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -20,7 +20,7 @@ class CommissionCalculateCommand extends Command
 {
     public function __construct(
         private readonly OperationReader $operationReader,
-        private readonly CommissionCalculationService $commissionCalculationService
+        private readonly CommissionCalculationProcessor $commissionCalculationService
     ) {
         parent::__construct();
     }

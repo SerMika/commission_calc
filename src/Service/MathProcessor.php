@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-class MathService
+class MathProcessor
 {
     public static function calculatePercentage(int|float $number, int|float $percentage): float
     {

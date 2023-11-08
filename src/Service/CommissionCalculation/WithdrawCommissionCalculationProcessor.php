@@ -6,11 +6,11 @@ namespace App\Service\CommissionCalculation;
 
 use App\DTO\Operation;
 use App\Enum\UserType;
-use App\Service\CurrencyConverterService;
-use App\Service\DateService;
-use App\Service\MathService;
+use App\Service\CurrencyConverterProcessor;
+use App\Service\DateProcessor;
+use App\Service\MathProcessor;
 
-class WithdrawCommissionCalculationService implements OperationCommissionCalculationInterface
+class WithdrawCommissionCalculationProcessor implements OperationCommissionCalculationInterface
 {
     private array $usersOperationsPerWeekInfo;
     private ?\DateTimeImmutable $lastOperationDate;
@@ -20,7 +20,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
         private readonly float $withdrawPrivateCommissionFeePercentage,
         private readonly int $freeWithdrawOperationsPerWeekCount,
         private readonly int $freeWithdrawOperationsPerWeekAmountInEur,
-        private readonly CurrencyConverterService $currencyConverterService,
+        private readonly CurrencyConverterProcessor $currencyConverterService,
     ) {
         $this->usersOperationsPerWeekInfo = [];
         $this->lastOperationDate = null;
@@ -38,7 +38,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
     {
         $this->updateUsersOperationsCountIfNewWeek($operation->getDate());
 
-        $commission = MathService::calculatePercentage(
+        $commission = MathProcessor::calculatePercentage(
             $this->calculateChargeableOperationAmount($operation),
             $this->withdrawPrivateCommissionFeePercentage
         );
@@ -55,7 +55,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
 
     private function calculateCommissionForBusinessWithdraw(Operation $operation): float
     {
-        return MathService::calculatePercentage(
+        return MathProcessor::calculatePercentage(
             $operation->getAmount(),
             $this->withdrawBusinessCommissionFeePercentage
         );
@@ -63,7 +63,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
 
     private function updateUsersOperationsCountIfNewWeek(\DateTimeImmutable $operationDate): void
     {
-        if ($this->lastOperationDate !== null && !DateService::isSameWeek($this->lastOperationDate, $operationDate)) {
+        if ($this->lastOperationDate !== null && !DateProcessor::isSameWeek($this->lastOperationDate, $operationDate)) {
             $this->usersOperationsPerWeekInfo = [];
         }
     }
@@ -75,7 +75,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
         $operationCurrency = $operation->getCurrency();
 
         if ($this->userIsEligibleForFreeOfChargeOperation($userId)) {
-            $operationAmountInEurAfterDiscount = MathService::nonNegativeSubtraction(
+            $operationAmountInEurAfterDiscount = MathProcessor::nonNegativeSubtraction(
                 $this->currencyConverterService->convertToEur($operationAmount, $operationCurrency),
                 $this->calculateAvailableDiscountAmountForUser($userId)
             );
@@ -118,7 +118,7 @@ class WithdrawCommissionCalculationService implements OperationCommissionCalcula
             $this->usersOperationsPerWeekInfo[$userId]['totalAmountInEur'] :
             0;
 
-        return MathService::nonNegativeSubtraction(
+        return MathProcessor::nonNegativeSubtraction(
             $this->freeWithdrawOperationsPerWeekAmountInEur,
             $userOperationsPerWeekTotalAmountInEur
         );

@@ -7,13 +7,13 @@ namespace App\Service\CommissionCalculation;
 use App\DTO\Operation;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
-use App\Service\MathService;
+use App\Service\MathProcessor;
 
-class CommissionCalculationService
+class CommissionCalculationProcessor
 {
     public function __construct(
-        private readonly DepositCommissionCalculationService $depositCommissionCalculationService,
-        private readonly WithdrawCommissionCalculationService $withdrawCommissionCalculationService,
+        private readonly DepositCommissionCalculationProcessor $depositCommissionCalculationService,
+        private readonly WithdrawCommissionCalculationProcessor $withdrawCommissionCalculationService,
     ) {
     }
 
@@ -55,7 +55,7 @@ class CommissionCalculationService
         $currencyDecimalPlaces = $currency->decimalPlaces();
 
         return number_format(
-            MathService::roundUpToDecimalPlaces($commission, $currencyDecimalPlaces),
+            MathProcessor::roundUpToDecimalPlaces($commission, $currencyDecimalPlaces),
             $currencyDecimalPlaces,
             thousands_separator: ''
         );

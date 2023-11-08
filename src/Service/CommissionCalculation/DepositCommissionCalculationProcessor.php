@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Service\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Service\MathService;
+use App\Service\MathProcessor;
 
-class DepositCommissionCalculationService implements OperationCommissionCalculationInterface
+class DepositCommissionCalculationProcessor implements OperationCommissionCalculationInterface
 {
     public function __construct(
         private readonly float $depositCommissionFeePercentage,
@@ -16,7 +16,7 @@ class DepositCommissionCalculationService implements OperationCommissionCalculat
 
     public function calculateCommissionForOperation(Operation $operation): float
     {
-        return MathService::calculatePercentage(
+        return MathProcessor::calculatePercentage(
             $operation->getAmount(),
             $this->depositCommissionFeePercentage
         );
