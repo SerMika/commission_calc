@@ -10,6 +10,15 @@ use App\Enum\UserType;
 
 class Operation
 {
+    public const OPERATION_FIELDS = [
+        'date',
+        'userId',
+        'userType',
+        'type',
+        'amount',
+        'currency',
+    ];
+
     public function __construct(
         private readonly \DateTimeImmutable $date,
         private readonly int $userId,
