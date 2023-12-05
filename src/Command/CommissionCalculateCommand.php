@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\Service\Processor\CommissionCalculationProcessor;
-use Generator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -36,17 +35,10 @@ class CommissionCalculateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $commissions = $this->commissionCalculationProcessor->calculateCommissionsForOperationsInFile($input->getArgument('filepath'));
-
-        $this->printCommissionsList($output, $commissions);
-
-        return Command::SUCCESS;
-    }
-
-    private function printCommissionsList(OutputInterface $output, Generator $commissions): void
-    {
-        foreach ($commissions as $commission) {
+        foreach ($this->commissionCalculationProcessor->calculate($input->getArgument('filepath')) as $commission) {
             $output->writeln($commission);
         }
+
+        return Command::SUCCESS;
     }
 }
