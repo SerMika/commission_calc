@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Enum\OperationCurrency;
+use DateTimeImmutable;
+use Exception;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -20,7 +22,7 @@ class CurrencyConverterProcessor
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getExchangeRates(): array
     {
@@ -62,7 +64,7 @@ class CurrencyConverterProcessor
     private function exchangeRatesAreValid(): bool
     {
         return $this->exchangeRates !== []
-            && $this->exchangeRates['date'] === (new \DateTimeImmutable())->format('Y-m-d');
+            && $this->exchangeRates['date'] === (new DateTimeImmutable())->format('Y-m-d');
     }
 
     private function setFreshExchangeRates(): void
@@ -72,7 +74,7 @@ class CurrencyConverterProcessor
 
             $this->exchangeRates = json_decode($response->getContent(), true);
         } catch (TransportExceptionInterface $e) {
-            throw new \Exception('There was an error while trying to get exchange rates from api!', $e->getCode());
+            throw new Exception('There was an error while trying to get exchange rates from api!', $e->getCode());
         }
     }
 

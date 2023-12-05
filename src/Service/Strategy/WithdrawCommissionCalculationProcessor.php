@@ -9,11 +9,12 @@ use App\Enum\UserType;
 use App\Service\CurrencyConverterProcessor;
 use App\Service\DateProcessor;
 use App\Service\MathProcessor;
+use DateTimeImmutable;
 
 class WithdrawCommissionCalculationProcessor implements OperationCommissionCalculationInterface
 {
     private array $usersOperationsPerWeekInfo;
-    private ?\DateTimeImmutable $lastOperationDate;
+    private ?DateTimeImmutable $lastOperationDate;
 
     public function __construct(
         private readonly float $withdrawBusinessCommissionFeePercentage,
@@ -61,7 +62,7 @@ class WithdrawCommissionCalculationProcessor implements OperationCommissionCalcu
         );
     }
 
-    private function updateUsersOperationsCountIfNewWeek(\DateTimeImmutable $operationDate): void
+    private function updateUsersOperationsCountIfNewWeek(DateTimeImmutable $operationDate): void
     {
         if ($this->lastOperationDate !== null && !DateProcessor::isSameWeek($this->lastOperationDate, $operationDate)) {
             $this->usersOperationsPerWeekInfo = [];
@@ -107,7 +108,7 @@ class WithdrawCommissionCalculationProcessor implements OperationCommissionCalcu
         }
     }
 
-    private function updateLastOperationDate(\DateTimeImmutable $operationDate): void
+    private function updateLastOperationDate(DateTimeImmutable $operationDate): void
     {
         $this->lastOperationDate = $operationDate;
     }

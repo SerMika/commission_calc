@@ -7,6 +7,7 @@ namespace App\Service\Validator;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
+use Exception;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -39,7 +40,7 @@ class OperationValidator
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function throwExceptionIfValidationNotSuccess(
         int $index,
@@ -54,7 +55,7 @@ class OperationValidator
                 $validationError->getInvalidValue(),
             );
 
-            throw new \Exception($exceptionMessage);
+            throw new Exception($exceptionMessage);
         }
     }
 }

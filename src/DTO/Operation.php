@@ -7,6 +7,7 @@ namespace App\DTO;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
+use DateTimeImmutable;
 
 class Operation
 {
@@ -20,7 +21,7 @@ class Operation
     ];
 
     public function __construct(
-        private readonly \DateTimeImmutable $date,
+        private readonly DateTimeImmutable $date,
         private readonly int $userId,
         private readonly UserType $userType,
         private readonly OperationType $type,
@@ -29,7 +30,7 @@ class Operation
     ) {
     }
 
-    public function getDate(): \DateTimeImmutable
+    public function getDate(): DateTimeImmutable
     {
         return $this->date;
     }

@@ -12,6 +12,7 @@ $finder = (new PhpCsFixer\Finder())
 return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony' => true,
+        'global_namespace_import' => ['import_classes' => true],
         'no_alternative_syntax' => true,
         'strict_comparison' => true,
         'strict_param' => true,
