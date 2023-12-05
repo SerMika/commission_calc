@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Enum\UserType;
 use App\Service\CurrencyConverterProcessor;
 use App\Service\DateProcessor;
 use App\Service\MathProcessor;
@@ -17,7 +16,6 @@ class WithdrawCommissionCalculationProcessor implements OperationCommissionCalcu
     private ?DateTimeImmutable $lastOperationDate;
 
     public function __construct(
-        private readonly float $withdrawBusinessCommissionFeePercentage,
         private readonly float $withdrawPrivateCommissionFeePercentage,
         private readonly int $freeWithdrawOperationsPerWeekCount,
         private readonly int $freeWithdrawOperationsPerWeekAmountInEur,
@@ -28,14 +26,6 @@ class WithdrawCommissionCalculationProcessor implements OperationCommissionCalcu
     }
 
     public function calculateCommissionForOperation(Operation $operation): float
-    {
-        return match ($operation->getUserType()) {
-            UserType::Private => $this->calculateCommissionForPrivateWithdraw($operation),
-            UserType::Business => $this->calculateCommissionForBusinessWithdraw($operation)
-        };
-    }
-
-    private function calculateCommissionForPrivateWithdraw(Operation $operation): float
     {
         $this->updateUsersOperationsCountIfNewWeek($operation->getDate());
 
@@ -52,14 +42,6 @@ class WithdrawCommissionCalculationProcessor implements OperationCommissionCalcu
         $this->updateLastOperationDate($operation->getDate());
 
         return $commission;
-    }
-
-    private function calculateCommissionForBusinessWithdraw(Operation $operation): float
-    {
-        return MathProcessor::calculatePercentage(
-            $operation->getAmount(),
-            $this->withdrawBusinessCommissionFeePercentage
-        );
     }
 
     private function updateUsersOperationsCountIfNewWeek(DateTimeImmutable $operationDate): void

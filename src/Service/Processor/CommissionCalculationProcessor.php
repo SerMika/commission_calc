@@ -44,7 +44,7 @@ class CommissionCalculationProcessor
         if ($operation->getType() === OperationType::Deposit) {
             $this->commissionCalculationContext->setDepositCommissionCalculationStrategy();
         } elseif ($operation->getUserType() === UserType::Business) {
-            // return withdraw business strat
+            $this->commissionCalculationContext->setBusinessWithdrawCommissionCalculationStrategy();
         } else {
             // return withdraw private strat
         }

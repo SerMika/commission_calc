@@ -12,7 +12,7 @@ class CommissionCalculationContext
 
     public function __construct(
         private readonly DepositCommissionCalculationStrategy $depositCommissionCalculationStrategy,
-        private readonly WithdrawCommissionCalculationProcessor $withdrawCommissionCalculationService,
+        private readonly BusinessWithdrawCommissionCalculationStrategy $businessWithdrawCommissionCalculationStrategy,
     ) {
     }
 
@@ -24,6 +24,11 @@ class CommissionCalculationContext
     public function setDepositCommissionCalculationStrategy(): void
     {
         $this->setCommissionCalculationStrategy($this->depositCommissionCalculationStrategy);
+    }
+
+    public function setBusinessWithdrawCommissionCalculationStrategy(): void
+    {
+        $this->setCommissionCalculationStrategy($this->businessWithdrawCommissionCalculationStrategy);
     }
 
     private function setCommissionCalculationStrategy(

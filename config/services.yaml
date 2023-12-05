@@ -23,13 +23,12 @@ services:
         arguments:
             - '%env(DEPOSIT_COMMISSION_FEE_PERCENTAGE)%'
 
-    App\Service\Strategy\WithdrawCommissionCalculationProcessor:
+    App\Service\Strategy\CommissionCalculation\BusinessWithdrawCommissionCalculationStrategy:
         arguments:
             - '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
 
     App\Service\Strategy\CommissionCalculation\WithdrawCommissionCalculationProcessor:
         arguments:
-            - '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
             - '%env(WITHDRAW_PRIVATE_COMMISSION_FEE_PERCENTAGE)%'
             - '%env(FREE_WITHDRAW_OPERATIONS_PER_WEEK_COUNT)%'
             - '%env(FREE_WITHDRAW_OPERATION_AMOUNT_EUR)%'
