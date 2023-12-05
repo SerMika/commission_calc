@@ -34,6 +34,8 @@ services:
             - '%env(FREE_WITHDRAW_OPERATION_AMOUNT_EUR)%'
 
     App\Service\Processor\CurrencyConverterProcessor:
+        arguments:
+            - '%env(EXCHANGE_RATES_API_URL)%'
         public: true
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

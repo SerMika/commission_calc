@@ -12,12 +12,12 @@ use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CurrencyConverterProcessor
 {
-    private const EXCHANGE_RATES_API = 'https://developers.paysera.com/tasks/api/currency-exchange-rates';
-
     private array $exchangeRates;
 
-    public function __construct(private readonly HttpClientInterface $client)
-    {
+    public function __construct(
+        private readonly string $exchangeRatesApiUrl,
+        private readonly HttpClientInterface $client
+    ) {
         $this->exchangeRates = [];
     }
 
@@ -70,7 +70,7 @@ class CurrencyConverterProcessor
     private function setFreshExchangeRates(): void
     {
         try {
-            $response = $this->client->request('GET', self::EXCHANGE_RATES_API);
+            $response = $this->client->request('GET', $this->exchangeRatesApiUrl);
 
             $this->exchangeRates = json_decode($response->getContent(), true);
         } catch (TransportExceptionInterface $e) {
