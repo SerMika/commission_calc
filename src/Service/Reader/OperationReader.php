@@ -11,6 +11,7 @@ use App\Enum\UserType;
 use App\Service\Strategy\OperationReader\OperationReaderContext;
 use App\Service\Validator\OperationValidator;
 use DateTimeImmutable;
+use Exception;
 use Generator;
 
 class OperationReader
@@ -23,6 +24,8 @@ class OperationReader
 
     public function getOperationsFromFile(string $filepath): Generator
     {
+        $this->validateFileType($filepath);
+
         $this->setOperationReaderStrategy($filepath);
 
         $plainOperationsArray = $this->operationReaderContext->readOperationsFromFile($filepath);
@@ -65,6 +68,16 @@ class OperationReader
         switch ($fileExtension) {
             case 'csv':
                 $this->operationReaderContext->setCSVReaderStrategy();
+                break;
+            default:
+                throw new Exception("Files of type '$fileExtension' are not supported.");
+        }
+    }
+
+    private function validateFileType(string $filepath): void
+    {
+        if (!array_key_exists('extension', pathinfo($filepath))) {
+            throw new Exception('Incorrect file provided.');
         }
     }
 }
