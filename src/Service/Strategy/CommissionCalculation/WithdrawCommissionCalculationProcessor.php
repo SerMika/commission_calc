@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Service\CurrencyConverterProcessor;
-use App\Service\DateProcessor;
-use App\Service\MathProcessor;
+use App\Service\Processor\CurrencyConverterProcessor;
+use App\Service\Processor\DateProcessor;
+use App\Service\Processor\MathProcessor;
 use DateTimeImmutable;
 
 class WithdrawCommissionCalculationProcessor implements OperationCommissionCalculationStrategyInterface

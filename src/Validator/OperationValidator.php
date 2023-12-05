@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Validator;
+namespace App\Validator;
 
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Application;
 
-use App\Service\CurrencyConverterProcessor;
+use App\Service\Processor\CurrencyConverterProcessor;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;

@@ -8,7 +8,6 @@ use App\DTO\Operation;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
-use App\Service\MathProcessor;
 use App\Service\Reader\OperationReader;
 use App\Service\Strategy\CommissionCalculation\CommissionCalculationContext;
 use Generator;

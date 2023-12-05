@@ -9,7 +9,7 @@ use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
 use App\Service\Strategy\OperationReader\OperationReaderContext;
-use App\Service\Validator\OperationValidator;
+use App\Validator\OperationValidator;
 use DateTimeImmutable;
 use Exception;
 use Generator;
