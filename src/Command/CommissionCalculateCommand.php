@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\CommissionCalculation\CommissionCalculationProcessor;
-use App\Service\Reader\OperationReader;
+use App\Service\Processor\CommissionCalculationProcessor;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -19,8 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CommissionCalculateCommand extends Command
 {
     public function __construct(
-        private readonly OperationReader $operationReader,
-        private readonly CommissionCalculationProcessor $commissionCalculationService
+        private readonly CommissionCalculationProcessor $commissionCalculationProcessor
     ) {
         parent::__construct();
     }
@@ -37,17 +35,12 @@ class CommissionCalculateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $operations = $this->operationReader->getOperationsFromCSV($input->getArgument('filepath'));
+        $commissions = $this->commissionCalculationProcessor->calculateCommissionsForOperationsInFile($input->getArgument('filepath'));
 
-        $commissions = $this->commissionCalculationService->getCommissionsForOperations($operations);
-
-        $output->writeln($this->getCommissionOutputString($commissions));
+        foreach ($commissions as $commission) {
+            $output->writeln($commission);
+        }
 
         return Command::SUCCESS;
-    }
-
-    private function getCommissionOutputString(array $commissions): string
-    {
-        return implode("\n", $commissions);
     }
 }

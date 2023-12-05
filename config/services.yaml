@@ -19,11 +19,11 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
 
-    App\Service\CommissionCalculation\DepositCommissionCalculationProcessor:
+    App\Service\Strategy\DepositCommissionCalculationStrategy:
         arguments:
             - '%env(DEPOSIT_COMMISSION_FEE_PERCENTAGE)%'
 
-    App\Service\CommissionCalculation\WithdrawCommissionCalculationProcessor:
+    App\Service\Strategy\WithdrawCommissionCalculationProcessor:
         arguments:
             - '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
             - '%env(WITHDRAW_PRIVATE_COMMISSION_FEE_PERCENTAGE)%'

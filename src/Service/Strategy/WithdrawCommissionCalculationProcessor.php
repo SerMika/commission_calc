@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\CommissionCalculation;
+namespace App\Service\Strategy;
 
 use App\DTO\Operation;
 use App\Enum\UserType;
@@ -11,7 +11,7 @@ use App\Service\DateProcessor;
 use App\Service\MathProcessor;
 use DateTimeImmutable;
 
-class WithdrawCommissionCalculationProcessor implements OperationCommissionCalculationInterface
+class WithdrawCommissionCalculationProcessor implements OperationCommissionCalculationStrategyInterface
 {
     private array $usersOperationsPerWeekInfo;
     private ?DateTimeImmutable $lastOperationDate;
