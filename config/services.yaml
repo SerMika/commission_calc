@@ -19,18 +19,23 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Kernel.php'
 
-    App\Service\CommissionCalculation\DepositCommissionCalculationProcessor:
+    App\Service\Strategy\CommissionCalculation\DepositCommissionCalculationStrategy:
         arguments:
             - '%env(DEPOSIT_COMMISSION_FEE_PERCENTAGE)%'
 
-    App\Service\CommissionCalculation\WithdrawCommissionCalculationProcessor:
+    App\Service\Strategy\CommissionCalculation\BusinessWithdrawCommissionCalculationStrategy:
         arguments:
             - '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
+
+    App\Service\Strategy\CommissionCalculation\PrivateWithdrawCommissionCalculationStrategy:
+        arguments:
             - '%env(WITHDRAW_PRIVATE_COMMISSION_FEE_PERCENTAGE)%'
             - '%env(FREE_WITHDRAW_OPERATIONS_PER_WEEK_COUNT)%'
             - '%env(FREE_WITHDRAW_OPERATION_AMOUNT_EUR)%'
 
-    App\Service\CurrencyConverterProcessor:
+    App\Service\Processor\CurrencyConverterProcessor:
+        arguments:
+            - '%env(EXCHANGE_RATES_API_URL)%'
         public: true
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

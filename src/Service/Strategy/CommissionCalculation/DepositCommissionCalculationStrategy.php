@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Service\CommissionCalculation;
+namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Service\MathProcessor;
+use App\Service\Processor\MathProcessor;
 
-class DepositCommissionCalculationProcessor implements OperationCommissionCalculationInterface
+class DepositCommissionCalculationStrategy implements OperationCommissionCalculationStrategyInterface
 {
     public function __construct(
         private readonly float $depositCommissionFeePercentage,

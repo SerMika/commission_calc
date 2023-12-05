@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Service\CommissionCalculation;
+namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
 
-interface OperationCommissionCalculationInterface
+interface OperationCommissionCalculationStrategyInterface
 {
     public function calculateCommissionForOperation(Operation $operation): float;
 }
