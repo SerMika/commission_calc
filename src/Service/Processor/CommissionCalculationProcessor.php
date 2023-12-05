@@ -45,13 +45,8 @@ class CommissionCalculationProcessor
         } elseif ($operation->getUserType() === UserType::Business) {
             $this->commissionCalculationContext->setBusinessWithdrawCommissionCalculationStrategy();
         } else {
-            // return withdraw private strat
+            $this->commissionCalculationContext->setPrivateWithdrawCommissionCalculationStrategy();
         }
-
-        //        return match ($operation->getType()) {
-        //            OperationType::Deposit => $this->depositCommissionCalculationService,
-        //            OperationType::Withdraw => $this->withdrawCommissionCalculationService,
-        //        };
     }
 
     private function getCommissionAmountInTheCurrencyFormat(float $commission, OperationCurrency $currency): string
