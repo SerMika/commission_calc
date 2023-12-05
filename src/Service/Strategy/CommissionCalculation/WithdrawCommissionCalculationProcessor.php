@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Service\Strategy;
+namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
 use App\Enum\UserType;
