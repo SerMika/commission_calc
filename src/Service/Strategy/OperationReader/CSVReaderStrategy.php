@@ -18,4 +18,9 @@ class CSVReaderStrategy implements OperationReaderStrategyInterface
             fclose($open);
         }
     }
+
+    public function supportsFile(string $filepath): bool
+    {
+        return pathinfo($filepath)['extension'] === 'csv';
+    }
 }

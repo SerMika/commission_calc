@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
+use App\Enum\OperationType;
+use App\Enum\UserType;
 use App\Service\Processor\MathProcessor;
 
 class BusinessWithdrawCommissionCalculationStrategy implements OperationCommissionCalculationStrategyInterface
@@ -20,5 +22,10 @@ class BusinessWithdrawCommissionCalculationStrategy implements OperationCommissi
             $operation->getAmount(),
             $this->withdrawBusinessCommissionFeePercentage
         );
+    }
+
+    public function supportsOperation(Operation $operation): bool
+    {
+        return $operation->getType() === OperationType::Withdraw && $operation->getUserType() === UserType::Business;
     }
 }

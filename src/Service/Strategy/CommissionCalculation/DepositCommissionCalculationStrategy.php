@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
+use App\Enum\OperationType;
 use App\Service\Processor\MathProcessor;
 
 class DepositCommissionCalculationStrategy implements OperationCommissionCalculationStrategyInterface
@@ -20,5 +21,10 @@ class DepositCommissionCalculationStrategy implements OperationCommissionCalcula
             $operation->getAmount(),
             $this->depositCommissionFeePercentage
         );
+    }
+
+    public function supportsOperation(Operation $operation): bool
+    {
+        return $operation->getType() === OperationType::Deposit;
     }
 }

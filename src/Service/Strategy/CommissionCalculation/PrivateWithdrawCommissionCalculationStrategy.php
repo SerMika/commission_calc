@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Repository\OperationsRepository;
-use App\Service\Processor\CurrencyConverterProcessor;
+use App\Enum\OperationType;
+use App\Enum\UserType;
+use App\Repository\RepositoryInterface;
+use App\Service\Processor\CurrencyConverterProcessorInterface;
 use App\Service\Processor\DateProcessor;
 use App\Service\Processor\MathProcessor;
 use DateTimeImmutable;
@@ -17,9 +19,14 @@ class PrivateWithdrawCommissionCalculationStrategy implements OperationCommissio
         private readonly float $withdrawPrivateCommissionFeePercentage,
         private readonly int $freeWithdrawOperationsPerWeekCount,
         private readonly int $freeWithdrawOperationsPerWeekAmountInEur,
-        private readonly CurrencyConverterProcessor $currencyConverterProcessor,
-        private readonly OperationsRepository $operationsRepository,
+        private readonly CurrencyConverterProcessorInterface $currencyConverterProcessor,
+        private readonly RepositoryInterface $operationsRepository,
     ) {
+    }
+
+    public function supportsOperation(Operation $operation): bool
+    {
+        return $operation->getType() === OperationType::Withdraw && $operation->getUserType() === UserType::Private;
     }
 
     public function calculateCommissionForOperation(Operation $operation): float
@@ -31,7 +38,7 @@ class PrivateWithdrawCommissionCalculationStrategy implements OperationCommissio
             $this->withdrawPrivateCommissionFeePercentage
         );
 
-        $this->operationsRepository->addOperation($operation);
+        $this->operationsRepository->add($operation);
 
         return $commission;
     }
