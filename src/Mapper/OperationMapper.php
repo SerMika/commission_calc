@@ -19,7 +19,7 @@ class OperationMapper implements MapperInterface
             intval($properties['userId']),
             UserType::from($properties['userType']),
             OperationType::from($properties['type']),
-            floatval($properties['amount']),
+            $properties['amount'],
             OperationCurrency::from($properties['currency']),
         );
     }

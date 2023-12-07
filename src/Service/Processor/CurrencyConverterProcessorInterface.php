@@ -10,7 +10,7 @@ interface CurrencyConverterProcessorInterface
 {
     public function getExchangeRates(): array;
 
-    public function convertToEur(float $amount, OperationCurrency $currency): float;
+    public function convertToEur(string $amount, OperationCurrency $currency): string;
 
-    public function convertFromEur(float $amount, OperationCurrency $currency): float;
+    public function convertFromEur(string $amount, OperationCurrency $currency): string;
 }

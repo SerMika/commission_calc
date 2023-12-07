@@ -8,7 +8,7 @@ use App\DTO\Operation;
 
 interface OperationCommissionCalculationStrategyInterface
 {
-    public function calculateCommissionForOperation(Operation $operation): float;
+    public function calculateCommissionForOperation(Operation $operation): string;
 
     public function supportsOperation(Operation $operation): bool;
 }

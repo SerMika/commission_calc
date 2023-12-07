@@ -7,11 +7,13 @@ services:
         class: App\Service\Strategy\CommissionCalculation\DepositCommissionCalculationStrategy
         arguments:
             - '%deposit_commission_fee_percentage%'
+            - '@service.processor.math'
 
     service.strategy.commission_calculation.business_withdraw:
         class: App\Service\Strategy\CommissionCalculation\BusinessWithdrawCommissionCalculationStrategy
         arguments:
             - '%withdraw_business_commission_fee_percentage%'
+            - '@service.processor.math'
 
     service.strategy.commission_calculation.private_withdraw:
         class: App\Service\Strategy\CommissionCalculation\PrivateWithdrawCommissionCalculationStrategy
@@ -21,6 +23,7 @@ services:
             - '%free_withdraw_operation_amount_eur%'
             - '@service.processor.currency_converter'
             - '@repository.operations'
+            - '@service.processor.math'
 
     service.strategy.commission_calculation.context:
         class: App\Service\Strategy\CommissionCalculation\CommissionCalculationContext

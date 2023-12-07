@@ -7,18 +7,19 @@ namespace App\Service\Strategy\CommissionCalculation;
 use App\DTO\Operation;
 use App\Enum\OperationType;
 use App\Enum\UserType;
-use App\Service\Processor\MathProcessor;
+use App\Service\Processor\MathProcessorInterface;
 
 class BusinessWithdrawCommissionCalculationStrategy implements OperationCommissionCalculationStrategyInterface
 {
     public function __construct(
-        private readonly float $withdrawBusinessCommissionFeePercentage,
+        private readonly string $withdrawBusinessCommissionFeePercentage,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
     }
 
-    public function calculateCommissionForOperation(Operation $operation): float
+    public function calculateCommissionForOperation(Operation $operation): string
     {
-        return MathProcessor::calculatePercentage(
+        return $this->mathProcessor->calculatePercentage(
             $operation->getAmount(),
             $this->withdrawBusinessCommissionFeePercentage
         );

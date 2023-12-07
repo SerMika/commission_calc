@@ -10,5 +10,5 @@ interface CommissionCalculationContextInterface
 {
     public function setStrategyForOperation(Operation $operation): void;
 
-    public function calculateCommissionForOperation(Operation $operation): float;
+    public function calculateCommissionForOperation(Operation $operation): string;
 }

@@ -1,17 +1,19 @@
 services:
+    service.processor.math:
+        class: App\Service\Processor\MathProcessor
+        public: true
+
     service.processor.currency_converter:
         class: App\Service\Processor\CurrencyConverterProcessor
         arguments:
             - '%exchange_rates_api_url%'
             - '@http_client.uri_template'
+            - '@service.processor.math'
         public: true
-
-    service.processor.commission_converter:
-        class: App\Service\Processor\CommissionConverterProcessor
 
     service.processor.commission_calculation:
         class: App\Service\Processor\CommissionCalculationProcessor
         arguments:
             - '@service.reader.operation'
             - '@service.strategy.commission_calculation.context'
-            - '@service.processor.commission_converter'
+            - '@service.processor.math'

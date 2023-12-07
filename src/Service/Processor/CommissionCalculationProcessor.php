@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Processor;
 
+use App\DTO\Operation;
 use App\Service\Reader\OperationReaderInterface;
 use App\Service\Strategy\CommissionCalculation\CommissionCalculationContextInterface;
 use Generator;
@@ -13,21 +14,21 @@ class CommissionCalculationProcessor implements CommissionCalculationProcessorIn
     public function __construct(
         private readonly OperationReaderInterface $operationReader,
         private readonly CommissionCalculationContextInterface $commissionCalculationContext,
-        private readonly CommissionConverterProcessorInterface $commissionConverterProcessor,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
     }
 
     public function calculate(string $filepath): Generator
     {
+        /** @var Generator|Operation[] $operations */
         $operations = $this->operationReader->getOperationsFromFile($filepath);
 
         foreach ($operations as $operation) {
+            $this->mathProcessor->setScale($operation->getCurrency()->decimalPlaces());
+
             $this->commissionCalculationContext->setStrategyForOperation($operation);
 
-            $commission = $this->commissionCalculationContext->calculateCommissionForOperation($operation);
-
-            yield $this->commissionConverterProcessor
-                ->getCommissionAmountInTheCurrencyFormat($commission, $operation->getCurrency());
+            yield $this->commissionCalculationContext->calculateCommissionForOperation($operation);
         }
     }
 }

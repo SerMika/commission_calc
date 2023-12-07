@@ -33,7 +33,7 @@ class CommissionCalculationContext implements CommissionCalculationContextInterf
         }
     }
 
-    public function calculateCommissionForOperation(Operation $operation): float
+    public function calculateCommissionForOperation(Operation $operation): string
     {
         return $this->suitableCommissionCalculationStrategy->calculateCommissionForOperation($operation);
     }

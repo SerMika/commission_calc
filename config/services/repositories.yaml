@@ -4,3 +4,4 @@ services:
     arguments:
       - '@mapper.operation'
       - '@service.processor.currency_converter'
+      - '@service.processor.math'

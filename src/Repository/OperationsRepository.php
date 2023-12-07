@@ -10,6 +10,7 @@ use App\Enum\OperationType;
 use App\Enum\UserType;
 use App\Mapper\MapperInterface;
 use App\Service\Processor\CurrencyConverterProcessorInterface;
+use App\Service\Processor\MathProcessorInterface;
 use DateTimeImmutable;
 
 class OperationsRepository implements RepositoryInterface
@@ -28,6 +29,7 @@ class OperationsRepository implements RepositoryInterface
     public function __construct(
         private readonly MapperInterface $operationMapper,
         private readonly CurrencyConverterProcessorInterface $currencyConverterProcessor,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
         $this->operations = [];
         $this->lastOperationDate = null;
@@ -64,7 +66,7 @@ class OperationsRepository implements RepositoryInterface
         return count($this->getUserWithdrawOperations($userId));
     }
 
-    public function getTotalUserWithdrawOperationsAmountInEur(int $userId): float
+    public function getTotalUserWithdrawOperationsAmountInEur(int $userId): string
     {
         $userWithdrawOperations = $this->getUserWithdrawOperations($userId);
 
@@ -72,7 +74,9 @@ class OperationsRepository implements RepositoryInterface
             return $this->currencyConverterProcessor->convertToEur($operation['amount'], $operation['currency']);
         }, $userWithdrawOperations);
 
-        return array_sum($operationsAmountsInEur);
+        return array_reduce($operationsAmountsInEur, function ($a, $b) {
+            return $this->mathProcessor->add($a, $b);
+        }, '0');
     }
 
     public function getUserWithdrawOperations(int $userId): array
