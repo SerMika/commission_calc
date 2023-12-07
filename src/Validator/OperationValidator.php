@@ -12,17 +12,17 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class OperationValidator
+class OperationValidator implements OperationValidatorInterface
 {
     public function __construct(private readonly ValidatorInterface $validator)
     {
     }
 
-    public function validateOperationArray(int $index, array $operationInfo): void
+    public function validateOperationArray(int $index, array $operationProperties): void
     {
         $constraints = $this->getConstraints();
 
-        $violations = $this->validator->validate($operationInfo, $constraints);
+        $violations = $this->validator->validate($operationProperties, $constraints);
 
         $this->throwExceptionIfValidationNotSuccess($index, $violations);
     }

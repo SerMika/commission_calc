@@ -3,39 +3,19 @@
 
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+imports:
+    - { resource: services/}
+
 parameters:
+    deposit_commission_fee_percentage: '%env(DEPOSIT_COMMISSION_FEE_PERCENTAGE)%'
+    withdraw_business_commission_fee_percentage: '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
+    withdraw_private_commission_fee_percentage: '%env(WITHDRAW_PRIVATE_COMMISSION_FEE_PERCENTAGE)%'
+    free_withdraw_operations_per_week_count: '%env(FREE_WITHDRAW_OPERATIONS_PER_WEEK_COUNT)%'
+    free_withdraw_operation_amount_eur: '%env(FREE_WITHDRAW_OPERATION_AMOUNT_EUR)%'
+    exchange_rates_api_url: '%env(EXCHANGE_RATES_API_URL)%'
 
 services:
     # default configuration for services in *this* file
     _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Kernel.php'
-
-    App\Service\Strategy\CommissionCalculation\DepositCommissionCalculationStrategy:
-        arguments:
-            - '%env(DEPOSIT_COMMISSION_FEE_PERCENTAGE)%'
-
-    App\Service\Strategy\CommissionCalculation\BusinessWithdrawCommissionCalculationStrategy:
-        arguments:
-            - '%env(WITHDRAW_BUSINESS_COMMISSION_FEE_PERCENTAGE)%'
-
-    App\Service\Strategy\CommissionCalculation\PrivateWithdrawCommissionCalculationStrategy:
-        arguments:
-            - '%env(WITHDRAW_PRIVATE_COMMISSION_FEE_PERCENTAGE)%'
-            - '%env(FREE_WITHDRAW_OPERATIONS_PER_WEEK_COUNT)%'
-            - '%env(FREE_WITHDRAW_OPERATION_AMOUNT_EUR)%'
-
-    App\Service\Processor\CurrencyConverterProcessor:
-        arguments:
-            - '%env(EXCHANGE_RATES_API_URL)%'
-        public: true
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+        autowire: false      # Automatically injects dependencies in your services.
+        autoconfigure: false # Automatically registers your services as commands, event subscribers, etc.

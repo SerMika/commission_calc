@@ -1,0 +1,7 @@
+services:
+    service.reader.operation:
+        class: App\Service\Reader\OperationReader
+        arguments:
+            - '@service.strategy.operation_reader.context'
+            - '@validator.operation'
+            - '@mapper.operation'

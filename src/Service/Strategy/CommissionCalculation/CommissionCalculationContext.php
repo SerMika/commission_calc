@@ -5,41 +5,36 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
+use Exception;
 
-class CommissionCalculationContext
+class CommissionCalculationContext implements CommissionCalculationContextInterface
 {
-    private OperationCommissionCalculationStrategyInterface $commissionCalculationStrategy;
+    /** @var OperationCommissionCalculationStrategyInterface[] */
+    private iterable $commissionCalculationStrategies;
 
-    public function __construct(
-        private readonly DepositCommissionCalculationStrategy $depositCommissionCalculationStrategy,
-        private readonly BusinessWithdrawCommissionCalculationStrategy $businessWithdrawCommissionCalculationStrategy,
-        private readonly PrivateWithdrawCommissionCalculationStrategy $privateWithdrawCommissionCalculationStrategy,
-    ) {
-    }
+    private ?OperationCommissionCalculationStrategyInterface $suitableCommissionCalculationStrategy;
 
-    public function calculateCommissionForOperation(Operation $operation): float
+    public function __construct(iterable $commissionCalculationStrategies)
     {
-        return $this->commissionCalculationStrategy->calculateCommissionForOperation($operation);
+        $this->commissionCalculationStrategies = $commissionCalculationStrategies;
+        $this->suitableCommissionCalculationStrategy = null;
     }
 
-    public function setDepositCommissionCalculationStrategy(): void
+    public function setStrategyForOperation(Operation $operation): void
     {
-        $this->setCommissionCalculationStrategy($this->depositCommissionCalculationStrategy);
+        foreach ($this->commissionCalculationStrategies as $commissionCalculationStrategy) {
+            if ($commissionCalculationStrategy->supportsOperation($operation)) {
+                $this->suitableCommissionCalculationStrategy = $commissionCalculationStrategy;
+            }
+        }
+
+        if ($this->suitableCommissionCalculationStrategy === null) {
+            throw new Exception('Cannot calculate commission for this operation.');
+        }
     }
 
-    public function setBusinessWithdrawCommissionCalculationStrategy(): void
+    public function calculateCommissionForOperation(Operation $operation): string
     {
-        $this->setCommissionCalculationStrategy($this->businessWithdrawCommissionCalculationStrategy);
-    }
-
-    public function setPrivateWithdrawCommissionCalculationStrategy(): void
-    {
-        $this->setCommissionCalculationStrategy($this->privateWithdrawCommissionCalculationStrategy);
-    }
-
-    private function setCommissionCalculationStrategy(
-        OperationCommissionCalculationStrategyInterface $commissionCalculationStrategy
-    ): void {
-        $this->commissionCalculationStrategy = $commissionCalculationStrategy;
+        return $this->suitableCommissionCalculationStrategy->calculateCommissionForOperation($operation);
     }
 }

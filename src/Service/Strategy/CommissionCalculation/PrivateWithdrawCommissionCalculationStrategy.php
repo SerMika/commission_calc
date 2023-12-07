@@ -5,33 +5,41 @@ declare(strict_types=1);
 namespace App\Service\Strategy\CommissionCalculation;
 
 use App\DTO\Operation;
-use App\Repository\OperationsRepository;
-use App\Service\Processor\CurrencyConverterProcessor;
+use App\Enum\OperationType;
+use App\Enum\UserType;
+use App\Repository\RepositoryInterface;
+use App\Service\Processor\CurrencyConverterProcessorInterface;
 use App\Service\Processor\DateProcessor;
-use App\Service\Processor\MathProcessor;
+use App\Service\Processor\MathProcessorInterface;
 use DateTimeImmutable;
 
 class PrivateWithdrawCommissionCalculationStrategy implements OperationCommissionCalculationStrategyInterface
 {
     public function __construct(
-        private readonly float $withdrawPrivateCommissionFeePercentage,
-        private readonly int $freeWithdrawOperationsPerWeekCount,
-        private readonly int $freeWithdrawOperationsPerWeekAmountInEur,
-        private readonly CurrencyConverterProcessor $currencyConverterProcessor,
-        private readonly OperationsRepository $operationsRepository,
+        private readonly string $withdrawPrivateCommissionFeePercentage,
+        private readonly string $freeWithdrawOperationsPerWeekCount,
+        private readonly string $freeWithdrawOperationsPerWeekAmountInEur,
+        private readonly CurrencyConverterProcessorInterface $currencyConverterProcessor,
+        private readonly RepositoryInterface $operationsRepository,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
     }
 
-    public function calculateCommissionForOperation(Operation $operation): float
+    public function supportsOperation(Operation $operation): bool
+    {
+        return $operation->getType() === OperationType::Withdraw && $operation->getUserType() === UserType::Private;
+    }
+
+    public function calculateCommissionForOperation(Operation $operation): string
     {
         $this->updateUsersOperationsCountIfNewWeek($operation->getDate());
 
-        $commission = MathProcessor::calculatePercentage(
+        $commission = $this->mathProcessor->calculatePercentage(
             $this->calculateChargeableOperationAmount($operation),
             $this->withdrawPrivateCommissionFeePercentage
         );
 
-        $this->operationsRepository->addOperation($operation);
+        $this->operationsRepository->add($operation);
 
         return $commission;
     }
@@ -45,14 +53,14 @@ class PrivateWithdrawCommissionCalculationStrategy implements OperationCommissio
         }
     }
 
-    private function calculateChargeableOperationAmount(Operation $operation): float
+    private function calculateChargeableOperationAmount(Operation $operation): string
     {
         $userId = $operation->getUserId();
         $operationAmount = $operation->getAmount();
         $operationCurrency = $operation->getCurrency();
 
         if ($this->userIsEligibleForFreeOfChargeOperation($userId)) {
-            $operationAmountInEurAfterDiscount = MathProcessor::nonNegativeSubtraction(
+            $operationAmountInEurAfterDiscount = $this->mathProcessor->nonNegativeSubtraction(
                 $this->currencyConverterProcessor->convertToEur($operationAmount, $operationCurrency),
                 $this->calculateAvailableDiscountAmountForUser($userId)
             );
@@ -72,12 +80,12 @@ class PrivateWithdrawCommissionCalculationStrategy implements OperationCommissio
             && $this->operationsRepository->getTotalUserWithdrawOperationsAmountInEur($userId) < $this->freeWithdrawOperationsPerWeekAmountInEur;
     }
 
-    private function calculateAvailableDiscountAmountForUser(int $userId): float
+    private function calculateAvailableDiscountAmountForUser(int $userId): string
     {
         $userWithdrawOperationsPerWeekTotalAmountInEur =
             $this->operationsRepository->getTotalUserWithdrawOperationsAmountInEur($userId);
 
-        return MathProcessor::nonNegativeSubtraction(
+        return $this->mathProcessor->nonNegativeSubtraction(
             $this->freeWithdrawOperationsPerWeekAmountInEur,
             $userWithdrawOperationsPerWeekTotalAmountInEur
         );

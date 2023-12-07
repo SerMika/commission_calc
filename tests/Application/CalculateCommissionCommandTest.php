@@ -9,6 +9,7 @@ use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class CalculateCommissionCommandTest extends KernelTestCase
 {
@@ -26,19 +27,28 @@ class CalculateCommissionCommandTest extends KernelTestCase
         $kernel = self::bootKernel();
         $application = new Application($kernel);
         $command = $application->find(self::COMMAND_NAME);
+        $container = $kernel->getContainer();
 
         $testExchangeRatesResponse = [
             'date' => new DateTimeImmutable(),
             'rates' => self::TEST_EXCHANGE_RATES,
         ];
-        $currencyConverterMock = $this->createPartialMock(CurrencyConverterProcessor::class, ['getExchangeRates']);
+
+        $currencyConverterMock = $this->getMockBuilder(CurrencyConverterProcessor::class)
+            ->setConstructorArgs([
+                'some-exchange-rates-url',
+                $this->createMock(HttpClientInterface::class),
+                $container->get('service.processor.math'),
+            ])
+            ->onlyMethods(['getExchangeRates'])
+            ->getMock();
 
         $currencyConverterMock
             ->expects($this->any())
             ->method('getExchangeRates')
             ->willReturn($testExchangeRatesResponse);
 
-        $kernel->getContainer()->set(CurrencyConverterProcessor::class, $currencyConverterMock);
+        $container->set('service.processor.currency_converter', $currencyConverterMock);
 
         $this->commandTester = new CommandTester($command);
     }

@@ -8,11 +8,12 @@ use App\DTO\Operation;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
-use App\Mapper\OperationMapper;
-use App\Service\Processor\CurrencyConverterProcessor;
+use App\Mapper\MapperInterface;
+use App\Service\Processor\CurrencyConverterProcessorInterface;
+use App\Service\Processor\MathProcessorInterface;
 use DateTimeImmutable;
 
-class OperationsRepository
+class OperationsRepository implements RepositoryInterface
 {
     /** @var array{
      *     date: DateTimeImmutable,
@@ -26,8 +27,9 @@ class OperationsRepository
     private array $operations;
 
     public function __construct(
-        private readonly OperationMapper $operationMapper,
-        private readonly CurrencyConverterProcessor $currencyConverterProcessor,
+        private readonly MapperInterface $operationMapper,
+        private readonly CurrencyConverterProcessorInterface $currencyConverterProcessor,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
         $this->operations = [];
         $this->lastOperationDate = null;
@@ -44,9 +46,12 @@ class OperationsRepository
         return empty($privateWithdrawDates) ? null : max($privateWithdrawDates);
     }
 
-    public function addOperation(Operation $operation): void
+    /**
+     * @param Operation $entity
+     */
+    public function add(object $entity): void
     {
-        $operationProperties = $this->operationMapper->mapToArrayFromEntity($operation);
+        $operationProperties = $this->operationMapper->mapToArrayFromEntity($entity);
 
         $this->operations[] = $operationProperties;
     }
@@ -61,7 +66,7 @@ class OperationsRepository
         return count($this->getUserWithdrawOperations($userId));
     }
 
-    public function getTotalUserWithdrawOperationsAmountInEur(int $userId): float
+    public function getTotalUserWithdrawOperationsAmountInEur(int $userId): string
     {
         $userWithdrawOperations = $this->getUserWithdrawOperations($userId);
 
@@ -69,7 +74,9 @@ class OperationsRepository
             return $this->currencyConverterProcessor->convertToEur($operation['amount'], $operation['currency']);
         }, $userWithdrawOperations);
 
-        return array_sum($operationsAmountsInEur);
+        return array_reduce($operationsAmountsInEur, function ($a, $b) {
+            return $this->mathProcessor->add($a, $b);
+        }, '0');
     }
 
     public function getUserWithdrawOperations(int $userId): array

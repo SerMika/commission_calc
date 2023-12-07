@@ -6,9 +6,9 @@ namespace App\Service\Strategy\OperationReader;
 
 use Generator;
 
-interface OperationReaderStrategyInterface
+interface OperationReaderContextInterface
 {
     public function readOperationsFromFile(string $filepath): Generator;
 
-    public function supportsFile(string $filepath): bool;
+    public function setStrategyForReadingFromFile(string $filepath): void;
 }

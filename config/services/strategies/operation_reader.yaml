@@ -1,0 +1,12 @@
+services:
+    _instanceof:
+        App\Service\Strategy\OperationReader\OperationReaderStrategyInterface:
+            tags: [ 'strategy.operation_reader' ]
+
+    service.strategy.operation_reader.context:
+        class: App\Service\Strategy\OperationReader\OperationReaderContext
+        arguments:
+          - !tagged_iterator strategy.operation_reader
+
+    service.strategy.operation_reader.csv:
+        class: App\Service\Strategy\OperationReader\CSVReaderStrategy

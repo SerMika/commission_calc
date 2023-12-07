@@ -25,7 +25,7 @@ class Operation
         private readonly int $userId,
         private readonly UserType $userType,
         private readonly OperationType $type,
-        private readonly float $amount,
+        private readonly string $amount,
         private readonly OperationCurrency $currency,
     ) {
     }
@@ -50,7 +50,7 @@ class Operation
         return $this->type;
     }
 
-    public function getAmount(): float
+    public function getAmount(): string
     {
         return $this->amount;
     }

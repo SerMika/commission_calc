@@ -10,13 +10,14 @@ use Exception;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class CurrencyConverterProcessor
+class CurrencyConverterProcessor implements CurrencyConverterProcessorInterface
 {
     private array $exchangeRates;
 
     public function __construct(
         private readonly string $exchangeRatesApiUrl,
-        private readonly HttpClientInterface $client
+        private readonly HttpClientInterface $client,
+        private readonly MathProcessorInterface $mathProcessor,
     ) {
         $this->exchangeRates = [];
     }
@@ -33,23 +34,23 @@ class CurrencyConverterProcessor
         return $this->exchangeRates;
     }
 
-    public function convertToEur(float $amount, OperationCurrency $currency): float
+    public function convertToEur(string $amount, OperationCurrency $currency): string
     {
         if (!$this->currencyIsEur($currency)) {
             $exchangeRate = $this->getCurrencyExchangeRate($currency);
 
-            return $amount / $exchangeRate;
+            return $this->mathProcessor->div($amount, $exchangeRate);
         }
 
         return $amount;
     }
 
-    public function convertFromEur(float $amount, OperationCurrency $currency): float
+    public function convertFromEur(string $amount, OperationCurrency $currency): string
     {
         if (!$this->currencyIsEur($currency)) {
             $exchangeRate = $this->getCurrencyExchangeRate($currency);
 
-            return $amount * $exchangeRate;
+            return $this->mathProcessor->mul($amount, $exchangeRate);
         }
 
         return $amount;
@@ -78,8 +79,8 @@ class CurrencyConverterProcessor
         }
     }
 
-    private function getCurrencyExchangeRate(OperationCurrency $currency): float
+    private function getCurrencyExchangeRate(OperationCurrency $currency): string
     {
-        return $this->getExchangeRates()['rates'][$currency->value];
+        return strval($this->getExchangeRates()['rates'][$currency->value]);
     }
 }
