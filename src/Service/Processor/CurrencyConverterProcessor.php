@@ -10,7 +10,7 @@ use Exception;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class CurrencyConverterProcessor
+class CurrencyConverterProcessor implements CurrencyConverterProcessorInterface
 {
     private array $exchangeRates;
 

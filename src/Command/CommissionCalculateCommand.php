@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Command;
 
-use App\Service\Processor\CommissionCalculationProcessor;
+use App\Service\Processor\CommissionCalculationProcessorInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,7 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CommissionCalculateCommand extends Command
 {
     public function __construct(
-        private readonly CommissionCalculationProcessor $commissionCalculationProcessor
+        private readonly CommissionCalculationProcessorInterface $commissionCalculationProcessor
     ) {
         parent::__construct();
     }

@@ -1,0 +1,28 @@
+services:
+    _instanceof:
+        App\Service\Strategy\CommissionCalculation\OperationCommissionCalculationStrategyInterface:
+            tags: [ 'strategy.commission_calculation' ]
+
+    service.strategy.commission_calculation.deposit:
+        class: App\Service\Strategy\CommissionCalculation\DepositCommissionCalculationStrategy
+        arguments:
+            - '%deposit_commission_fee_percentage%'
+
+    service.strategy.commission_calculation.business_withdraw:
+        class: App\Service\Strategy\CommissionCalculation\BusinessWithdrawCommissionCalculationStrategy
+        arguments:
+            - '%withdraw_business_commission_fee_percentage%'
+
+    service.strategy.commission_calculation.private_withdraw:
+        class: App\Service\Strategy\CommissionCalculation\PrivateWithdrawCommissionCalculationStrategy
+        arguments:
+            - '%withdraw_private_commission_fee_percentage%'
+            - '%free_withdraw_operations_per_week_count%'
+            - '%free_withdraw_operation_amount_eur%'
+            - '@service.processor.currency_converter'
+            - '@repository.operations'
+
+    service.strategy.commission_calculation.context:
+        class: App\Service\Strategy\CommissionCalculation\CommissionCalculationContext
+        arguments:
+            - !tagged_iterator strategy.commission_calculation

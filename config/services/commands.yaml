@@ -1,0 +1,6 @@
+services:
+    command.commission_calculate:
+        class: App\Command\CommissionCalculateCommand
+        arguments:
+            - '@service.processor.commission_calculation'
+        tags: [ 'console.command' ]

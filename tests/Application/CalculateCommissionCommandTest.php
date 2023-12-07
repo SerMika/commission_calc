@@ -31,14 +31,17 @@ class CalculateCommissionCommandTest extends KernelTestCase
             'date' => new DateTimeImmutable(),
             'rates' => self::TEST_EXCHANGE_RATES,
         ];
-        $currencyConverterMock = $this->createPartialMock(CurrencyConverterProcessor::class, ['getExchangeRates']);
+        $currencyConverterMock = $this->createPartialMock(
+            CurrencyConverterProcessor::class,
+            ['getExchangeRates']
+        );
 
         $currencyConverterMock
             ->expects($this->any())
             ->method('getExchangeRates')
             ->willReturn($testExchangeRatesResponse);
 
-        $kernel->getContainer()->set(CurrencyConverterProcessor::class, $currencyConverterMock);
+        $kernel->getContainer()->set('service.processor.currency_converter', $currencyConverterMock);
 
         $this->commandTester = new CommandTester($command);
     }

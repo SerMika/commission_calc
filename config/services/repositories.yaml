@@ -1,0 +1,6 @@
+services:
+  repository.operations:
+    class: App\Repository\OperationsRepository
+    arguments:
+      - '@mapper.operation'
+      - '@service.processor.currency_converter'

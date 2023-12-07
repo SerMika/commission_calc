@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace App\Service\Reader;
 
 use App\DTO\Operation;
-use App\Mapper\OperationMapper;
-use App\Service\Strategy\OperationReader\OperationReaderContext;
-use App\Validator\OperationValidator;
+use App\Mapper\MapperInterface;
+use App\Service\Strategy\OperationReader\OperationReaderContextInterface;
+use App\Validator\OperationValidatorInterface;
 use Exception;
 use Generator;
 
-class OperationReader
+class OperationReader implements OperationReaderInterface
 {
     public function __construct(
-        private readonly OperationReaderContext $operationReaderContext,
-        private readonly OperationValidator $operationValidator,
-        private readonly OperationMapper $operationMapper,
+        private readonly OperationReaderContextInterface $operationReaderContext,
+        private readonly OperationValidatorInterface $operationValidator,
+        private readonly MapperInterface $operationMapper,
     ) {
     }
 
@@ -24,14 +24,14 @@ class OperationReader
     {
         $this->validateFileType($filepath);
 
-        $this->setOperationReaderStrategy($filepath);
+        $this->operationReaderContext->setStrategyForReadingFromFile($filepath);
 
         $plainOperationsArray = $this->operationReaderContext->readOperationsFromFile($filepath);
 
         return $this->makeOperationsFromArray($plainOperationsArray);
     }
 
-    public function makeOperationsFromArray(Generator $plainOperationsArray): Generator
+    private function makeOperationsFromArray(Generator $plainOperationsArray): Generator
     {
         foreach ($plainOperationsArray as $index => $plainOperationInfo) {
             $operationInfo = $this->getFormattedOperationInfo($plainOperationInfo);
@@ -45,19 +45,6 @@ class OperationReader
     private function getFormattedOperationInfo(array $plainOperationInfo): array
     {
         return array_combine(Operation::OPERATION_FIELDS, array_values($plainOperationInfo));
-    }
-
-    private function setOperationReaderStrategy(string $filepath): void
-    {
-        $fileExtension = pathinfo($filepath)['extension'];
-
-        switch ($fileExtension) {
-            case 'csv':
-                $this->operationReaderContext->setCSVReaderStrategy();
-                break;
-            default:
-                throw new Exception("Files of type '$fileExtension' are not supported.");
-        }
     }
 
     private function validateFileType(string $filepath): void

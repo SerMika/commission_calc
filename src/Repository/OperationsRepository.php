@@ -8,11 +8,11 @@ use App\DTO\Operation;
 use App\Enum\OperationCurrency;
 use App\Enum\OperationType;
 use App\Enum\UserType;
-use App\Mapper\OperationMapper;
-use App\Service\Processor\CurrencyConverterProcessor;
+use App\Mapper\MapperInterface;
+use App\Service\Processor\CurrencyConverterProcessorInterface;
 use DateTimeImmutable;
 
-class OperationsRepository
+class OperationsRepository implements RepositoryInterface
 {
     /** @var array{
      *     date: DateTimeImmutable,
@@ -26,8 +26,8 @@ class OperationsRepository
     private array $operations;
 
     public function __construct(
-        private readonly OperationMapper $operationMapper,
-        private readonly CurrencyConverterProcessor $currencyConverterProcessor,
+        private readonly MapperInterface $operationMapper,
+        private readonly CurrencyConverterProcessorInterface $currencyConverterProcessor,
     ) {
         $this->operations = [];
         $this->lastOperationDate = null;
@@ -44,9 +44,12 @@ class OperationsRepository
         return empty($privateWithdrawDates) ? null : max($privateWithdrawDates);
     }
 
-    public function addOperation(Operation $operation): void
+    /**
+     * @param Operation $entity
+     */
+    public function add(object $entity): void
     {
-        $operationProperties = $this->operationMapper->mapToArrayFromEntity($operation);
+        $operationProperties = $this->operationMapper->mapToArrayFromEntity($entity);
 
         $this->operations[] = $operationProperties;
     }

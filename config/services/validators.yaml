@@ -1,0 +1,5 @@
+services:
+    validator.operation:
+        class: App\Validator\OperationValidator
+        arguments:
+            - '@validator'

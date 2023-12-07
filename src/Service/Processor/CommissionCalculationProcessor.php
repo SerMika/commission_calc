@@ -4,59 +4,30 @@ declare(strict_types=1);
 
 namespace App\Service\Processor;
 
-use App\DTO\Operation;
-use App\Enum\OperationCurrency;
-use App\Enum\OperationType;
-use App\Enum\UserType;
-use App\Service\Reader\OperationReader;
-use App\Service\Strategy\CommissionCalculation\CommissionCalculationContext;
+use App\Service\Reader\OperationReaderInterface;
+use App\Service\Strategy\CommissionCalculation\CommissionCalculationContextInterface;
 use Generator;
 
-class CommissionCalculationProcessor
+class CommissionCalculationProcessor implements CommissionCalculationProcessorInterface
 {
     public function __construct(
-        private readonly OperationReader $operationReader,
-        private readonly CommissionCalculationContext $commissionCalculationContext,
+        private readonly OperationReaderInterface $operationReader,
+        private readonly CommissionCalculationContextInterface $commissionCalculationContext,
+        private readonly CommissionConverterProcessorInterface $commissionConverterProcessor,
     ) {
     }
 
-    public function calculateCommissionsForOperationsInFile(string $filepath): Generator
+    public function calculate(string $filepath): Generator
     {
         $operations = $this->operationReader->getOperationsFromFile($filepath);
 
         foreach ($operations as $operation) {
-            yield $this->calculateFinalCommissionForOperation($operation);
+            $this->commissionCalculationContext->setStrategyForOperation($operation);
+
+            $commission = $this->commissionCalculationContext->calculateCommissionForOperation($operation);
+
+            yield $this->commissionConverterProcessor
+                ->getCommissionAmountInTheCurrencyFormat($commission, $operation->getCurrency());
         }
-    }
-
-    public function calculateFinalCommissionForOperation(Operation $operation): string
-    {
-        $this->setCommissionCalculationStrategyForOperation($operation);
-
-        $commission = $this->commissionCalculationContext->calculateCommissionForOperation($operation);
-
-        return $this->getCommissionAmountInTheCurrencyFormat($commission, $operation->getCurrency());
-    }
-
-    private function setCommissionCalculationStrategyForOperation(Operation $operation): void
-    {
-        if ($operation->getType() === OperationType::Deposit) {
-            $this->commissionCalculationContext->setDepositCommissionCalculationStrategy();
-        } elseif ($operation->getUserType() === UserType::Business) {
-            $this->commissionCalculationContext->setBusinessWithdrawCommissionCalculationStrategy();
-        } else {
-            $this->commissionCalculationContext->setPrivateWithdrawCommissionCalculationStrategy();
-        }
-    }
-
-    private function getCommissionAmountInTheCurrencyFormat(float $commission, OperationCurrency $currency): string
-    {
-        $currencyDecimalPlaces = $currency->decimalPlaces();
-
-        return number_format(
-            MathProcessor::roundUpToDecimalPlaces($commission, $currencyDecimalPlaces),
-            $currencyDecimalPlaces,
-            thousands_separator: ''
-        );
     }
 }
